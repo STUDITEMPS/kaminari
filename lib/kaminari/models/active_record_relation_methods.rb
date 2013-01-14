@@ -16,12 +16,13 @@ module Kaminari
         # Remove includes only if they are irrelevant
         c = c.except(:includes) unless references_eager_loaded_tables?
 
-        # .group returns an OrderdHash that responds to #count
-        c = c.count(column_name, options)
-        if c.is_a?(ActiveSupport::OrderedHash)
-          c.count
+        uses_distinct_sql_statement = c.to_sql =~ /DISTINCT/i
+        if uses_distinct_sql_statement
+          ActiveRecord::Base.connection.select_value("select count(*) FROM (#{c.to_sql}) AS dummy")
         else
-          c.respond_to?(:count) ? c.count(column_name, options) : c
+          # .group returns an OrderdHash that responds to #count
+          c = c.count(column_name, options)
+          c.respond_to?(:count) ? c.count : c
         end
       end
     end
