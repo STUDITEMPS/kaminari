@@ -58,12 +58,6 @@ if defined? ActiveRecord
             it { should have(5).users }
             its('first.name') { should == 'user001' }
           end
-          
-          context "page 1 per nil" do
-            subject { model_class.page(1).per(nil) }
-            it { should have(model_class.count).users }
-          end
-        end
 
         describe '#padding' do
           context 'page 1 per 5 padding 1' do
@@ -123,7 +117,7 @@ if defined? ActiveRecord
             subject { model_class.page }
             its(:total_pages) { should == 4 }
           end
-          
+
           context "with per(nil)" do
             subject { model_class.page.per(nil) }
             its(:total_pages) { should == 1 }
@@ -141,7 +135,7 @@ if defined? ActiveRecord
             subject { model_class.page(2).per 3 }
             its(:current_page) { should == 2 }
           end
-          
+
           context "with per(nil)" do
             subject { model_class.page.per(nil) }
             its(:current_page) { should == 1 }
